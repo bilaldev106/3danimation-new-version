@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ROAD UNLIMITED — The Next Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Fullscreen Pinned Stage -->
+  <div class="viewport-stage" id="stage">
+
+    <!-- Static Constellation Background Texture from uploaded asset -->
+    <div class="plexus-backdrop"></div>
+
+    <!-- Ambient Plexus Network Canvas -->
+    <canvas id="plexus-canvas"></canvas>
+
+    <!-- 3D WebGL Canvas for Mercedes-Benz GLS 580 -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Subtle vignette and gradient lighting -->
+    <div class="ambient-glow glow-top"></div>
+    <div class="ambient-glow glow-center"></div>
+    <div class="ambient-vignette"></div>
+
+    <!-- Minimal Luxury HUD / Header -->
+    <header class="hud-header">
+      <div class="brand">
+        <span class="brand-symbol">✦</span>
+        <span class="brand-title">MERCEDES // VISION</span>
+      </div>
+      <div class="scene-tracker">
+        <span class="scene-num active" id="scene-tracker-1">01</span>
+        <span class="scene-sep">/</span>
+        <span class="scene-num" id="scene-tracker-2">02</span>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span class="status-label" id="status-text">INITIALIZING</span>
+      </div>
+    </header>
+
+    <!-- Main Pinned Scenes Container -->
+    <main class="scenes-wrapper">
+
+      <!-- SCENE 1: ROAD UNLIMITED -->
+      <section class="scene scene-1" id="scene-1" aria-label="Scene One">
+        <div class="scene-content">
+          <p class="eyebrow" id="eyebrow-1">CHAPTER ONE</p>
+          <h1 class="headline scatter-headline" id="headline-1" data-text="ROAD UNLIMITED">ROAD UNLIMITED</h1>
+          <p class="scene-subtext" id="subtext-1">Scroll down to release the horizon</p>
+        </div>
+      </section>
+
+      <!-- SCENE 2: THE NEXT HORIZON -->
+      <section class="scene scene-2" id="scene-2" aria-label="Scene Two">
+        <div class="scene-content">
+          <p class="eyebrow" id="eyebrow-2">CHAPTER TWO</p>
+          <h2 class="headline horizon-headline" id="headline-2" data-text="THE NEXT HORIZON">THE NEXT HORIZON</h2>
+          <p class="scene-subtext" id="subtext-2">Beyond the boundary of vision</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Minimal Scroll Indicator & Interactive Progress Bar -->
+    <footer class="hud-footer">
+      <div class="scroll-helper" id="scrollHelper" role="button" tabindex="0" title="Click to animate between scenes">
+        <div class="mouse-icon">
+          <div class="mouse-wheel"></div>
+        </div>
+        <span class="scroll-label" id="scrollLabel">SCROLL TO EXPERIENCE</span>
+      </div>
+
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </footer>
+
+    <!-- Interactive 3D Vehicle Joystick Controller (Bottom Right) -->
+    <aside class="joystick-container" id="joystickContainer" aria-label="3D Vehicle Controller">
+      <div class="joystick-base" id="joystickBase">
+        <div class="joystick-reticle-ring"></div>
+        <div class="joystick-axis-h"></div>
+        <div class="joystick-axis-v"></div>
+        <div class="joystick-stick" id="joystickStick">
+          <div class="stick-knob">
+            <span class="stick-core-dot"></span>
+          </div>
+        </div>
+      </div>
+      <div class="joystick-caption">
+        <span class="joy-dot"></span>
+        <span class="joy-text">ROTATE 3D</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Local Offline-Ready 3D Engine -->
+  <script src="assets/three.min.js"></script>
+  <script src="assets/GLTFLoader.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

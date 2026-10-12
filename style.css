@@ -1,0 +1,666 @@
+/* ==========================================================================
+   ROAD UNLIMITED — THE NEXT HORIZON
+   PINNED SCENE-DRIVEN CINEMATIC EXPERIENCE
+   ========================================================================== */
+
+:root {
+  --bg-color: #060709;
+  --text-main: #f5f6f8;
+  --text-muted: rgba(245, 246, 248, 0.45);
+  --text-dim: rgba(245, 246, 248, 0.25);
+  --accent-cyan: #6ee7b7;
+  --accent-silver: #d1d5db;
+  --font-serif: 'Cinzel', 'Times New Roman', serif;
+  --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hard locking: Absolute zero native scrolling */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Master Viewport Container pinned to window */
+.viewport-stage {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(circle at 50% 40%, #0e1117 0%, #060709 75%);
+}
+
+/* Constellation Backdrop from Asset */
+.plexus-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/plexus.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 1;
+  filter: contrast(115%) brightness(95%);
+  transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
+}
+
+/* Canvas Plexus Background */
+#plexus-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+/* 3D WebGL Canvas */
+#webgl-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  outline: none;
+}
+
+/* Atmospheric Glows & Vignettes */
+.ambient-glow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  filter: blur(100px);
+  border-radius: 50%;
+}
+
+.glow-top {
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70vw;
+  height: 35vh;
+  background: radial-gradient(ellipse, rgba(120, 160, 220, 0.08) 0%, transparent 70%);
+}
+
+.glow-center {
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+}
+
+.ambient-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(circle at center, transparent 40%, rgba(5, 6, 8, 0.85) 100%);
+}
+
+/* HUD Header */
+.hud-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.2rem 3.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+.brand-symbol {
+  font-size: 1rem;
+  color: var(--accent-silver);
+  animation: pulseRotate 12s linear infinite;
+  display: inline-block;
+}
+
+.scene-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.scene-num {
+  transition: color 0.4s ease, transform 0.4s ease;
+}
+
+.scene-num.active {
+  color: #fff;
+  font-weight: 700;
+  transform: scale(1.15);
+}
+
+.scene-sep {
+  opacity: 0.3;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: blink 2.5s ease-in-out infinite;
+}
+
+/* Scenes Wrapper */
+.scenes-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+}
+
+/* Pinned Scene Layout */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.scene-1 {
+  opacity: 1;
+  visibility: visible;
+  z-index: 12;
+}
+
+.scene-2 {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 14;
+}
+
+.scene-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 90vw;
+  padding-top: clamp(4.8rem, 8.8vh, 6.8rem);
+  transform-style: preserve-3d;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.45em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+  opacity: 0.85;
+  transition: opacity 0.4s ease;
+}
+
+/* Headline Shared Styles */
+.headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.6vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 255, 255, 0.15);
+  transform-style: preserve-3d;
+}
+
+.headline .line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+}
+
+.headline .word {
+  display: inline-flex;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+}
+
+.headline .space {
+  display: inline-block;
+  width: 0.35em;
+}
+
+/* Individual Char Splitting for 3D Scatter */
+.headline .char {
+  display: inline-block;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: text-shadow 0.3s ease;
+}
+
+.scene-subtext {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 1rem;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scene 2 Horizon Headline */
+.horizon-headline {
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #f3f4f6;
+  text-shadow: 0 10px 50px rgba(0, 0, 0, 0.9), 0 0 80px rgba(255, 255, 255, 0.25);
+}
+
+/* HUD Footer */
+.hud-footer {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0 3.5rem 2.8rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(200, 215, 235, 0.6), #ffffff);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.05s linear;
+}
+
+.scroll-helper {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  cursor: pointer;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.scroll-helper:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.scroll-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.mouse-icon {
+  width: 15px;
+  height: 24px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  position: relative;
+}
+
+.mouse-wheel {
+  width: 3px;
+  height: 5px;
+  background: #fff;
+  border-radius: 2px;
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: mouseWheel 2s ease-in-out infinite;
+}
+
+.progress-container {
+  width: 140px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #9ca3af, #ffffff);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.1s linear;
+}
+
+/* Animations */
+@keyframes mouseWheel {
+  0% { transform: translate(-50%, 0); opacity: 1; }
+  60% { transform: translate(-50%, 8px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 0; }
+}
+
+@keyframes pulseRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ==========================================================================
+   3D Vehicle Interactive Joystick (Bottom Right)
+   ========================================================================== */
+.joystick-container {
+  position: absolute;
+  bottom: 2.4rem;
+  right: 2.8rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.joystick-base {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(30, 36, 48, 0.75) 0%, rgba(10, 12, 16, 0.92) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), inset 0 2px 6px rgba(255, 255, 255, 0.12), inset 0 -4px 10px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.joystick-base:active,
+.joystick-base.active {
+  cursor: grabbing;
+  border-color: rgba(110, 231, 183, 0.6);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 22px rgba(110, 231, 183, 0.25), inset 0 2px 6px rgba(255, 255, 255, 0.18);
+}
+
+.joystick-reticle-ring {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.joystick-axis-h {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.joystick-axis-v {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.joystick-stick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  margin-left: -20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.stick-knob {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #a1a1aa 40%, #3f3f46 90%, #18181b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), inset 0 1px 2px rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stick-core-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-cyan);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.joystick-base.active .stick-core-dot {
+  transform: scale(1.3);
+  background-color: #38bdf8;
+  box-shadow: 0 0 12px #38bdf8;
+}
+
+.joystick-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.joy-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--accent-silver);
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   Responsive Optimizations: Tablets & Mobiles
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .hud-header {
+    padding: 1.8rem 2.2rem;
+  }
+  .hud-footer {
+    padding: 0 2rem 2.2rem;
+  }
+  .joystick-container {
+    bottom: 2rem;
+    right: 2rem;
+  }
+  .headline {
+    font-size: clamp(1.9rem, 4.8vw, 3.6rem);
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 768px) {
+  .hud-header {
+    padding: 1.2rem 1.4rem;
+  }
+  .brand-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+  }
+  .scene-tracker {
+    font-size: 0.75rem;
+  }
+  .status-pill {
+    display: none;
+  }
+  .scene-content {
+    padding-top: clamp(4.2rem, 8vh, 5.5rem);
+    max-width: 94vw;
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.4rem;
+  }
+  .headline {
+    font-size: clamp(1.6rem, 6.8vw, 2.6rem);
+    letter-spacing: 0.08em;
+    line-height: 1.15;
+  }
+  .scene-subtext {
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    margin-top: 0.6rem;
+  }
+  .hud-footer {
+    padding: 0 1.2rem 1.4rem;
+    align-items: flex-start;
+  }
+  .scroll-helper {
+    padding: 0.48rem 0.85rem;
+  }
+  .scroll-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+  }
+  .mouse-icon {
+    width: 12px;
+    height: 18px;
+  }
+  .progress-container {
+    width: 100px;
+  }
+  .joystick-container {
+    bottom: 1.2rem;
+    right: 1.2rem;
+  }
+  .joystick-base {
+    width: 72px;
+    height: 72px;
+  }
+  .joystick-stick {
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
+    margin-left: -17px;
+  }
+  .joystick-caption {
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+  }
+}
+
+@media (max-width: 480px) {
+  .headline {
+    font-size: clamp(1.4rem, 6.2vw, 2.1rem);
+    letter-spacing: 0.06em;
+  }
+  .scene-content {
+    padding-top: 4.2rem;
+  }
+}
